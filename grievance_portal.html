@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Grievance Portal</title>
+
+  <!-- ✅ Latest supported EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+  <!-- ✅ SweetAlert2 for fancy popups -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- ✅ Confetti animation -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background-color: #fce4ec;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      color: #c2185b;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #c2185b;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ad1457;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Submit Your Grievance</h2>
+    <form id="grievance-form">
+      <label for="title">Title:</label>
+      <input type="text" id="title" required>
+
+      <label for="content">What’s bothering you?</label>
+      <textarea id="content" rows="4" required></textarea>
+
+      <label for="mood">Mood:</label>
+      <select id="mood">
+        <option>😡 Angry</option>
+        <option>😢 Sad</option>
+        <option>😐 Meh</option>
+        <option>😊 Happy</option>
+      </select>
+
+      <label for="severity">Severity (1-10):</label>
+      <input type="number" id="severity" min="1" max="10" required>
+
+      <button type="submit">Submit Grievance</button>
+    </form>
+  </div>
+
+  <script>
+    emailjs.init("EsWvi76poJhTKz60h");
+
+    document.getElementById("grievance-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const templateParams = {
+        title: document.getElementById("title").value,
+        content: document.getElementById("content").value,
+        mood: document.getElementById("mood").value,
+        severity: document.getElementById("severity").value,
+        time: new Date().toLocaleString()
+      };
+
+      emailjs.send("service_84xdtlp", "template_ujdkfgf", templateParams)
+        .then(function () {
+          // 🎊 Confetti effect
+          confetti({
+            particleCount: 150,
+            spread: 90,
+            origin: { y: 0.6 }
+          });
+
+          // ✅ Fancy SweetAlert2 popup
+          Swal.fire({
+            icon: 'success',
+            title: 'Submitted!',
+            text: 'Your complaints have been forwarded to Mr Samad ❤',
+            confirmButtonColor: '#c2185b'
+          });
+
+          document.getElementById("grievance-form").reset();
+        }, function (error) {
+          console.error("EmailJS Error:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: 'Failed to send email. Check your EmailJS setup.',
+            confirmButtonColor: '#c2185b'
+          });
+        });
+    });
+  </script>
+</body>
+</html>
